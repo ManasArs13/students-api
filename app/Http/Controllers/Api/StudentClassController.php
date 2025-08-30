@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StudentClass\StoreStudentClassRequest;
 use App\Http\Requests\StudentClass\UpdateClassCurriculumRequest;
 use App\Http\Requests\StudentClass\UpdateStudentClassRequest;

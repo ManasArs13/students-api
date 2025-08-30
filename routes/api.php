@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\LectureController;
-use App\Http\Controllers\StudentClassController;
-use App\Http\Controllers\StudentController;
+use App\Http\Controllers\Api\LectureController;
+use App\Http\Controllers\Api\StudentClassController;
+use App\Http\Controllers\Api\StudentController;
 use Illuminate\Support\Facades\Route;
 
 // Студенты
