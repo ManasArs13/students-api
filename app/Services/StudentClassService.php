@@ -7,51 +7,100 @@ use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Сервис для работы с классами студентов
+ *
+ * Содержит бизнес-логику операций с сущностью StudentClass
+ */
 class StudentClassService
 {
+    /**
+     * Получить все классы
+     *
+     * @return LengthAwarePaginator Коллекция всех классов
+     */
     public function getAllClasses(): LengthAwarePaginator
     {
         return StudentClass::paginate(15);
     }
 
-    public function getClassWithStudents($studentClass): StudentClass
+    /**
+     * Получить класс с информацией о студентах
+     *
+     * @param StudentClass $class Модель класса
+     * @return StudentClass Класс с загруженными студентами
+     */
+    public function getClassWithStudents($class): StudentClass
     {
-        return $studentClass->load('students');
+        return $class->load('students');
     }
 
-    public function getClassCurriculum(StudentClass $studentClass): StudentClass
+    /**
+     * Получить учебный план класса
+     *
+     * @param StudentClass $class Модель класса
+     * @return StudentClass Класс с загруженным учебным планом
+     */
+    public function getClassCurriculum(StudentClass $class): StudentClass
     {
-        return $studentClass->load('lectures');
+        return $class->load('lectures');
     }
 
+    /**
+     * Создать новый класс
+     *
+     * @param array $data Валидированные данные класса
+     * @return StudentClass Созданный класс
+     */
     public function createClass(array $data): StudentClass
     {
         return StudentClass::create($data);
     }
 
-    public function updateClass(StudentClass $studentClass, array $data): StudentClass
+    /**
+     * Обновить данные класса
+     *
+     * @param StudentClass $class Модель класса
+     * @param array $data Валидированные данные для обновления
+     * @return StudentClass Обновленный класс
+     */
+    public function updateClass(StudentClass $class, array $data): StudentClass
     {
-        $studentClass->update($data);
-        return $studentClass;
+        $class->update($data);
+        return $class;
     }
 
-    public function deleteClass(StudentClass $studentClass): void
+    /**
+     * Удалить класс
+     *
+     * @param StudentClass $class Модель класса
+     * @return void
+     */
+    public function deleteClass(StudentClass $class): void
     {
         try {
-            DB::transaction(function () use ($studentClass) {
-                $studentClass->students()->update(['student_class_id' => null]);
-                $studentClass->delete();
+            DB::transaction(function () use ($class) {
+                $class->students()->update(['student_class_id' => null]);
+                $class->delete();
             });
         } catch (Exception $e) {
             throw new Exception("Failed to delete class: " . $e->getMessage());
         }
     }
 
-    public function updateCurriculum(StudentClass $studentClass, array $lecturesData): StudentClass
+    /**
+     * Обновить учебный план класса
+     *
+     * @param StudentClass $class Модель класса
+     * @param array $lecturesData Данные лекций для учебного плана
+     * @return StudentClass Класс с обновленным учебным планом
+     * @throws \Throwable
+     */
+    public function updateCurriculum(StudentClass $class, array $lecturesData): StudentClass
     {
         try {
-            DB::transaction(function () use ($studentClass, $lecturesData) {
-                $studentClass->lectures()->detach();
+            DB::transaction(function () use ($class, $lecturesData) {
+                $class->lectures()->detach();
 
                 $syncData = [];
 
@@ -59,10 +108,10 @@ class StudentClassService
                     $syncData[$lectureData['lecture_id']] = ['order' => $lectureData['order']];
                 }
 
-                $studentClass->lectures()->sync($syncData);
+                $class->lectures()->sync($syncData);
             });
 
-            return $studentClass->load('lectures');
+            return $class->load('lectures');
         } catch (Exception $e) {
             throw new Exception("Failed to update curriculum: " . $e->getMessage());
         }
