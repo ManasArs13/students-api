@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\StudentClass;
+use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
@@ -36,28 +37,34 @@ class StudentClassService
 
     public function deleteClass(StudentClass $studentClass): void
     {
-        DB::transaction(function () use ($studentClass) {
-            // Открепляем студентов от класса
-            $studentClass->students()->update(['student_class_id' => null]);
-            $studentClass->delete();
-        });
+        try {
+            DB::transaction(function () use ($studentClass) {
+                $studentClass->students()->update(['student_class_id' => null]);
+                $studentClass->delete();
+            });
+        } catch (Exception $e) {
+            throw new Exception("Failed to delete class: " . $e->getMessage());
+        }
     }
 
     public function updateCurriculum(StudentClass $studentClass, array $lecturesData): StudentClass
     {
-        DB::transaction(function () use ($studentClass, $lecturesData) {
-            // Очищаем текущий учебный план
-            $studentClass->lectures()->detach();
+        try {
+            DB::transaction(function () use ($studentClass, $lecturesData) {
+                $studentClass->lectures()->detach();
 
-            // Добавляем лекции с порядком
-            $syncData = [];
-            foreach ($lecturesData as $lectureData) {
-                $syncData[$lectureData['lecture_id']] = ['order' => $lectureData['order']];
-            }
+                $syncData = [];
 
-            $studentClass->lectures()->sync($syncData);
-        });
+                foreach ($lecturesData as $lectureData) {
+                    $syncData[$lectureData['lecture_id']] = ['order' => $lectureData['order']];
+                }
 
-        return $class->load('lectures');
+                $studentClass->lectures()->sync($syncData);
+            });
+
+            return $studentClass->load('lectures');
+        } catch (Exception $e) {
+            throw new Exception("Failed to update curriculum: " . $e->getMessage());
+        }
     }
 }
