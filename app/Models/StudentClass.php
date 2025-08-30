@@ -24,6 +24,6 @@ class StudentClass extends Model
     {
         return $this->belongsToMany(Lecture::class, 'student_class_lecture', 'student_class_id', 'lecture_id')
             ->withPivot('order')
-            ->orderBy('order');
+            ->orderByPivot('order', 'asc');
     }
 }

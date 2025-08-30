@@ -21,7 +21,7 @@ class StudentFactory extends Factory
 
     public function withoutClass(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'student_class_id' => null,
         ]);
     }
