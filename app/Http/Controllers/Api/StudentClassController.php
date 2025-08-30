@@ -112,6 +112,6 @@ class StudentClassController extends Controller
     public function updateCurriculum(UpdateClassCurriculumRequest $request, StudentClass $class): StudentClassResource
     {
         $studentClass = $this->classService->updateCurriculum($class, $request->validated()['lectures']);
-        return new StudentClassResource($studentClass->lectures);
+        return new StudentClassResource($studentClass);
     }
 }

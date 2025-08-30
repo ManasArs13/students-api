@@ -36,7 +36,7 @@ class Lecture extends Model
 
     public function students(): BelongsToMany
     {
-        return $this->belongsToMany(Student::class, 'student_lecture')
+        return $this->belongsToMany(Student::class, 'student_lecture', 'lecture_id', 'student_id')
             ->withTimestamps();
     }
 }
