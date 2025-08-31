@@ -32,7 +32,7 @@ class StudentClassService
      */
     public function getClassWithStudents($class): StudentClass
     {
-        return $class->load('students');
+        return $class->load(['students']);
     }
 
     /**
