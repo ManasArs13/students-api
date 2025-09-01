@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS students_api;
+GRANT ALL PRIVILEGES ON students_api.* TO 'root'@'%';
+FLUSH PRIVILEGES;
