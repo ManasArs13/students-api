@@ -55,7 +55,7 @@ if docker compose ps | grep -q "app-php"; then
     
     # Запускаем миграции (опционально)
     echo -e "${YELLOW}🗄️  Running migrations...${NC}"
-    docker compose exec app php artisan migrate --force
+    docker compose exec app php artisan migrate --force --seed
     
 else
     echo -e "${RED}❌ PHP container failed to start${NC}"
